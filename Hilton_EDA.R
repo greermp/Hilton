@@ -8,7 +8,16 @@ library(readxl)
 library(ggthemes)
 library(rsconnect)
 library(ggpointdensity)
+library(ggscatter)
 
+library(ggpmisc)
+library(tidyr)
+library(plyr)
+library(dplyr)
+library(ggmap)
+library(ggpubr)
+library(ggExtra)
+setwd("~/MSBA/MOD3/Hilton")
 HiltonUS <- read_excel("HiltonUSEmployeeDataAll.xlsx")
 HotelData <- read_excel('HiltonUSTotalHotelLevelData.xlsx')
 
@@ -71,7 +80,7 @@ HiltonUS$HotelName <- factor(HiltonUS$HotelBrand, labels = levels)
 
 
 ggscatter(HiltonUS, x="WorkLifeBalance", y="JobSatisfaction", color="lightgray")  + geom_density_2d() +stat_density_2d(aes(fill=..level..), geom="polygon")+  gradient_fill("YlOrRd")
-ggscatter(HiltonUS, x="RewardsBenefits", y="JobSatisfaction", color="lightgray")  + geom_density_2d() +stat_density_2d(aes(fill=..level..), geom="polygon")+  gradient_fill("YlOrRd")
+ggscatter(HiltonUS, x="RewardsBenefits", y="JobSatisfaction", color="lightgray")  + stat_density_2d(aes(fill=..level..), geom="polygon")+  gradient_fill("YlOrRd")
 ggscatter(HiltonUS, x="WorkEnvironment", y="JobSatisfaction", color="lightgray")  + geom_density_2d() +stat_density_2d(aes(fill=..level..), geom="polygon")+  gradient_fill("YlOrRd")
 
 jsf_model = lm(JobSatisfaction ~ WorkLifeBalance + RewardsBenefits + WorkEnvironment, data = HiltonUS)
@@ -100,19 +109,3 @@ ggplot(HiltonUS, aes(x = "WorkLifeBalance", y = "JobSatisfaction")) +
 
 ggplot(filter(HiltonUS,HotelName=='HotelA'), aes(x=WorkLifeBalance, y=JobSatisfaction)) + geom_pointdensity() + scale_color_viridis_c() + geom_jitter()
 
-## Data in a data.frame
-x1 <- rnorm(n=1E3, sd=2)
-x2 <- x1*1.2 + rnorm(n=1E3, sd=2)
-df <- data.frame(x1,x2)
-
-## Use densCols() output to get density at each point
-x <- densCols(x1,x2, colramp=colorRampPalette(c("black", "white")))
-df$dens <- col2rgb(x)[1,] + 1L
-
-## Map densities to colors
-cols <-  colorRampPalette(c("#000099", "#00FEFF", "#45FE4F", 
-                            "#FCFF00", "#FF9400", "#FF3100"))(256)
-df$col <- cols[df$dens]
-
-## Plot it, reordering rows so that densest points are plotted on top
-plot(x2~x1, data=df[order(df$dens),], pch=20, col=col, cex=2)
