@@ -1,5 +1,6 @@
 .Rhistory
-.ppt*
-.pdf
+*.pptx
+*.png
+*.pdf
 plots
-.sav
+*.sav

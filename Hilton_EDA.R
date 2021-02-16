@@ -9,7 +9,8 @@ library(ggthemes)
 library(rsconnect)
 library(ggpointdensity)
 library(ggscatter)
-
+library(hrbrthemes)
+library(viridis)
 library(ggpmisc)
 library(tidyr)
 library(plyr)
@@ -98,14 +99,96 @@ ggscatter(filter(HiltonUS,HotelName=='HotelA'), x = "WorkEnvironment", y = "JobS
 
 
 
-ggplot(HiltonUS, aes(x = "WorkLifeBalance", y = "JobSatisfaction")) +
-  geom_hex(bins=30) +
+ggplot(HiltonUS, aes(factor(WorkEnviron5), IntentToStayFivePoint)) + 
+  geom_violin() 
+
+ggplot(HiltonUS, aes(factor(MgtTrust), IntentToStayFivePoint, color=factor(MgtTrust))) + 
+  geom_violin() 
+
+
+
+# Perceptual IVs (5-point composite scales):
+#   • WorkLifeBalance
+# • Communication
+# • RewardsBenefits
+# • LearningDevelopment
+# • Voice
+# • TeamWork
+# • WorkEnvironment
+
+HiltonUS %>% sample_frac(.01) %>% 
+ggplot(aes(x=WorkLifeBalance, y= WorkEnvironment, color=IntentToStayDichotomous)) + 
+  geom_point(alpha=.9) + geom_jitter()
+
+HiltonUS %>% sample_frac(.01) %>% 
+  ggplot(aes(x=Communication, y= Voice, color=IntentToStayDichotomous)) + 
+  geom_point(alpha=.1) + geom_jitter()
+
+HiltonUS %>% sample_frac(.01) %>% 
+  ggplot(aes(x=RewardsBenefits, y= IntentToStayFivePoint)) + 
+  geom_point(alpha=.9) + geom_jitter()
+
+ggplot(HiltonUS, aes(factor(RewardsBenefits), IntentToStayFivePoint)) + 
+  geom_boxplot() 
+
+ggplot(HiltonUS, aes(factor(WorkEnvironment), IntentToStayFivePoint)) + 
+  geom_boxplot() 
+
+ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint))+geom_hex(binwidth = c(2, 2))
+
+ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint))+stat_binhex(binwidth = c(1, 1)) 
+
+
+ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint)) +
+  stat_density_2d(aes(fill = stat(density)), geom = 'raster', contour = FALSE) +       
   scale_fill_viridis_c() +
-  geom_point(shape = '.', col = 'white')
-
-# palette = c("#00AFBB", "#E7B800", "#FC4E07")
+  coord_cartesian(expand = FALSE)
 
 
 
-ggplot(filter(HiltonUS,HotelName=='HotelA'), aes(x=WorkLifeBalance, y=JobSatisfaction)) + geom_pointdensity() + scale_color_viridis_c() + geom_jitter()
+ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint)) +
+  geom_point(colour="blue", alpha=0.9) +
+  geom_density2d(colour="black")
 
+ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint)) +geom_jitter()+ geom_pointdensity() + scale_color_viridis_c()
+
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits, fill=IntentToStayFivePoint)) +geom_tile()+  scale_fill_gradient(low="red", high="blue") +  theme_ipsum()
+
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits, fill=IntentToStayFivePoint)) +geom_tile()+  scale_fill_viridis() +  theme_ipsum()
+
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits, fill=IntentToStayFivePoint)) +geom_tile()+    scale_fill_distiller(palette = "RdPu") +  theme_ipsum()
+
+
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits, fill=IntentToStayDichotomous)) +geom_tile()+    scale_fill_distiller(palette = "RdPu") +  theme_ipsum()+
+#   geom_density2d()
+
+
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits)) +
+#   stat_density2d(aes(fill = stat(level)), geom="polygon") +
+#   scale_fill_viridis_c(option = "plasma") +
+#   theme(legend.position = "magma")
+# 
+# ggplot(HiltonUS, aes(WorkEnvironment, IntentToStayFivePoint)) +
+#   stat_density2d(aes(fill = stat(level)), geom="polygon") +
+#   scale_fill_viridis_c(option = "plasma") +
+#   theme(legend.position = "magma")
+# 
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits)) + geom_point(alpha=.005)+geom_jitter() + geom_density_2d_filled(alpha = 0.7, contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint))
+# 
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits)) + geom_density_2d_filled( alpha = 0.5, contour_var = 'ndensity')+ facet_wrap(vars(IntentToStayDichotomous))
+# 
+# ggplot(HiltonUS, aes(WorkEnvironment, RewardsBenefits))+ geom_density_2d_filled(alpha = 0.9, contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint))
+
+ggplot(HiltonUS, aes(x=WorkLifeBalance, y=JobSatisfaction))+ geom_density_2d_filled(alpha = 0.9, contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint)) 
+
+ggplot(HiltonUS, aes(x=WorkLifeBalance, y=JobSatisfaction))+ geom_density_2d_filled(alpha = 0.9, contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint)) 
+
+ggplot(HiltonUS, aes(x=Voice, y=Communication))+ geom_density_2d_filled(alpha = 0.9, contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint))
+
+ggplot(HiltonUS, aes(x=Teamwork, y=LearningDevelopment))+ geom_density_2d_filled(contour_var = 'ndensity') + facet_wrap(vars(IntentToStayFivePoint))
+
+ggplot(HiltonUS, aes(x=Teamwork, y=LearningDevelopment))+ geom_density_2d_filled(contour_var = 'ndensity') + facet_wrap(vars(IntentToStayDichotomous))
+
+ggplot(HiltonUS, aes(x=Teamwork, y=LearningDevelopment)) + stat_density_2d(geom = "point", aes(size = after_stat(density)), n = 75, contour = FALSE)
+
+ggplot(HiltonUS, aes(x=Teamwork, y=LearningDevelopment)) + stat_density_2d(geom = "point", aes(size = after_stat(density)), n = 5, contour = FALSE)+ facet_wrap(vars(IntentToStayDichotomous))
